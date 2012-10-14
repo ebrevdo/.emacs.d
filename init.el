@@ -94,6 +94,9 @@
   :strike-through nil :overline nil :underline nil :slant normal
   :weight normal :height 113 :width normal :foundry "unknown" :family "DejaVu Sans Mono"))))))
 
+;; GNU R
+(require 'ess-site)
+
 ;; python
 ;;(autoload 'pymacs-apply "pymacs")
 ;;(autoload 'pymacs-call "pymacs")
@@ -111,9 +114,8 @@
   (lambda ()
     (define-key inferior-python-mode-map [(tab)] 'completion-at-point)))
 
-(setq python-shell-interpreter "ipython --pylab"
+(setq python-shell-interpreter "ipython --pylab --colors=NoColor"
       python-shell-virtualenv-path "/export/disk0/wb/python/"
-
       python-shell-interpreter-args ""
       python-shell-prompt-regexp "In \\[[0-9]+\\]: "
       python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
@@ -227,6 +229,18 @@
  '((R . t)
    (python . t)
    (sh . t)))
+
+;; reftex for org-mode
+(defun org-mode-reftex-setup ()
+  (load-library "reftex")
+  (and (buffer-file-name)
+       (file-exists-p (buffer-file-name))
+       (reftex-parse-all))
+  (define-key org-mode-map (kbd "C-c )") 'reftex-citation))
+(add-hook 'org-mode-hook 'org-mode-reftex-setup)
+
+;; other extensions
+(add-to-list 'auto-mode-alist '("[.]avdl$" . javascript-mode))
 
 ;; shells
 (defvar my-local-shells
