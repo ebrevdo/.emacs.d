@@ -21,7 +21,7 @@
                                     ess ess-smart-underscore
                                     find-file-in-project
                                     idle-highlight-mode ido-ubiquitous
-                                    magit midje-mode org paredit
+                                    magit org paredit
                                     project-mode python scala-mode slime
                                     slime-repl
                                     starter-kit starter-kit-bindings
@@ -59,6 +59,7 @@
 
 (when window-system
   (fullscreen))
+
 
 ;; set a decent color theme
 (require 'color-theme)
@@ -115,7 +116,6 @@
     (define-key inferior-python-mode-map [(tab)] 'completion-at-point)))
 
 (setq python-shell-interpreter "ipython --pylab --colors=NoColor"
-      python-shell-virtualenv-path "/export/disk0/wb/python/"
       python-shell-interpreter-args ""
       python-shell-prompt-regexp "In \\[[0-9]+\\]: "
       python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
@@ -131,8 +131,11 @@
   (add-to-PATH (concat dir "/bin"))
   (add-to-list 'exec-path (concat dir "/bin")))
 
-;; For org-mode python, support my virtualenv.
-(activate-virtualenv "/export/disk0/wb/python/")
+(when (file-accessible-directory-p "/export/disk0/wb/python")
+  (setq python-shell-virtualenv-path "/export/disk0/wb/python/")
+
+  ;; For org-mode python, support my virtualenv.
+  (activate-virtualenv "/export/disk0/wb/python/"))
 
 ;; clojure env tweaks
 (require 'clojure-mode)
@@ -203,8 +206,13 @@
 
 ;; scala stuff
 ;; load the ensime lisp code...
-(add-to-list 'load-path "/home/eugene/scala/ensime/elisp/")
-(require 'ensime)
+(when (file-accessible-directory-p "/home/eugene/scala/ensime")
+  (add-to-list 'load-path "/home/eugene/scala/ensime/elisp/")
+  (require 'ensime)
+  ;; This step causes the ensime-mode to be started whenever
+  ;; scala-mode is started for a buffer. You may have to customize this step
+  ;; if you're not using the standard scala mode.
+  (add-hook 'scala-mode-hook 'ensime-scala-mode-hook))
 
 ;; java
 ;; (add-to-list 'load-path "/home/eugene/java/malabar/lisp/")
@@ -217,11 +225,6 @@
 ;; (require 'malabar-mode)
 ;; (setq malabar-groovy-lib-dir "/home/eugene/java/malabar/lib")
 ;; (add-to-list 'auto-mode-alist '("\\.java\\'" . malabar-mode))
-
-;; This step causes the ensime-mode to be started whenever
-;; scala-mode is started for a buffer. You may have to customize this step
-;; if you're not using the standard scala mode.
-(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
 ;; org mode
 (org-babel-do-load-languages
