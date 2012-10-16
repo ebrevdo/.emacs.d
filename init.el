@@ -57,14 +57,13 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 
-(when window-system
+(when (and window-system (not (eq system-type 'darwin)))
   (fullscreen))
 
-
 ;; set a decent color theme
-(require 'color-theme)
 (when window-system
-    (color-theme-dark-laptop))
+  (require 'color-theme)
+  (color-theme-dark-laptop))
 
 ;; empty the initial scratch message
 (setq initial-scratch-message "")
@@ -85,15 +84,8 @@
 (global-linum-mode t)
 
 (when window-system
-  (custom-set-faces
-   ;; custom-set-faces was added by Custom.
-   ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; Your init file should contain only one such instance.
-   ;; If there is more than one, they won't work right.
-   '(default ((t (:inherit nil :stipple nil :background "black"
-                           :foreground "white" :inverse-video nil :box nil
-  :strike-through nil :overline nil :underline nil :slant normal
-  :weight normal :height 113 :width normal :foundry "unknown" :family "DejaVu Sans Mono"))))))
+  ;; Set 16pt font
+  (set-face-attribute 'default nil :height 160))
 
 ;; GNU R
 (require 'ess-site)
@@ -162,10 +154,10 @@
 
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(blink-cursor-mode nil)
  '(column-number-mode t)
  '(comint-completion-addsuffix t)
