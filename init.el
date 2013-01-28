@@ -4,6 +4,13 @@
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (add-to-list 'package-archives                                    ;;
+;;              '("melpa" . "http://melpa.milkbox.net/packages/") t) ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
 ;; defined before (package-initialize) is called so it's available for
 ;; use within username.el scripts.
 (defun ensure-packages (ps)
@@ -21,8 +28,8 @@
                                     ess ess-smart-underscore
                                     find-file-in-project
                                     idle-highlight-mode ido-ubiquitous
-                                    magit org paredit
-                                    project-mode python scala-mode slime
+                                    magit org paredit python
+                                    project-mode scala-mode slime
                                     slime-repl
                                     starter-kit starter-kit-bindings
                                     starter-kit-eshell starter-kit-lisp
@@ -63,6 +70,7 @@
 ;; set a decent color theme
 (when window-system
   (require 'color-theme)
+  ;;(color-theme-initialize)
   (color-theme-dark-laptop))
 
 ;; empty the initial scratch message
@@ -186,6 +194,7 @@
 		c++-mode-hook
                 emacs-lisp-mode-hook
                 clojure-mode-hook
+                latex-mode
                 scala-mode-hook
                 lisp-mode-hook
 		java-mode-hook
