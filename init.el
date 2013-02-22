@@ -5,8 +5,8 @@
              '("marmalade" . "http://marmalade-repo.org/packages/"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (add-to-list 'package-archives                                    ;;
-;;              '("melpa" . "http://melpa.milkbox.net/packages/") t) ;;
+(add-to-list 'package-archives                                    ;;
+             '("melpa" . "http://melpa.milkbox.net/packages/") t) ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -70,7 +70,7 @@
 ;; set a decent color theme
 (when window-system
   (require 'color-theme)
-  ;;(color-theme-initialize)
+  (color-theme-initialize)
   (color-theme-dark-laptop))
 
 ;; empty the initial scratch message
@@ -140,11 +140,11 @@
 ;; clojure env tweaks
 (require 'clojure-mode)
 (defun turn-on-paredit () (paredit-mode 1))
-(add-hook 'clojure-mode-hook 'esk-turn-on-paredit)
-(add-hook 'lisp-mode-hook 'esk-turn-on-paredit)
-(add-hook 'emacs-lisp-mode-hook 'esk-turn-on-paredit)
+(add-hook 'clojure-mode-hook 'paredit-mode)
+(add-hook 'lisp-mode-hook 'paredit-mode)
+(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
 (add-hook 'slime-repl-mode-hook 'clojure-mode-font-lock-setup)
-(add-hook 'slime-repl-mode-hook 'esk-turn-on-paredit)
+(add-hook 'slime-repl-mode-hook 'paredit-mode)
 (define-key clojure-mode-map (kbd "C-c v") 'slime-eval-buffer)
 (global-set-key (kbd "C-c C-j") 'clojure-jack-in)
 
@@ -178,6 +178,7 @@
  '(comint-scroll-to-bottom-on-input t)
  '(inhibit-startup-screen t)
  '(menu-bar-mode t)
+ '(nrepl-server-command "lein2 repl :headless")
  '(protect-buffer-bury-p nil)
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
@@ -204,6 +205,24 @@
 		   (setq-default indent-tabs-mode nil)
 		   (setq-default show-trailing-whitespace t)
 		   (setq-default highlight-tabs t))))
+
+;; If you want auto-complete
+;; (require 'auto-complete)
+;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+;; (require 'auto-complete-config)
+;; (ac-config-default)
+
+;; (dolist (mode '(python-mode
+;;                 shell-script-mode
+;;                 c-mode
+;;                 c++-mode
+;;                 emacs-lisp-mode
+;;                 clojure-mode
+;;                 latex-mode
+;;                 scala-mode
+;;                 lisp-mode
+;;                 java-mode))
+;;   (add-to-list 'ac-modes mode))
 
 ;; scala stuff
 ;; load the ensime lisp code...
@@ -361,3 +380,9 @@ Dmitriy Igrishin's patched version of comint.el."
     (if (not unread-command-events)
         ;; comint's "Type space to flush" swallows space. put it back in.
         (setq unread-command-events (listify-key-sequence " "))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
