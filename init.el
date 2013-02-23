@@ -28,7 +28,7 @@
                                     ess ess-smart-underscore
                                     find-file-in-project
                                     idle-highlight-mode ido-ubiquitous
-                                    magit org paredit python
+                                    magit org paredit python ein
                                     project-mode scala-mode slime
                                     slime-repl
                                     starter-kit starter-kit-bindings
@@ -66,6 +66,9 @@
 
 (when (and window-system (not (eq system-type 'darwin)))
   (fullscreen))
+
+(when (not window-system)
+  (xterm-mouse-mode))
 
 ;; set a decent color theme
 (when window-system
@@ -137,6 +140,32 @@
   ;; For org-mode python, support my virtualenv.
   (activate-virtualenv "/export/disk0/wb/python/"))
 
+;; jedi
+(setq jedi:setup-keys t)
+(add-hook 'python-mode-hook 'jedi:setup)
+
+;; ein and jedi
+(add-hook 'ein:notebook-multilang-mode-hook
+  (lambda ()
+    (define-key ein:notebook-multilang-mode-map [(tab)] 'ein:completer-complete)))
+
+(add-hook 'ein:notebook-python-mode-hook
+  (lambda ()
+    (define-key ein:notebook-python-mode-map [(tab)] 'ein:completer-complete)))
+
+;; python-mode automatically accesses ein
+;;(add-hook 'after-init-hook 'ein:notebooklist-load)
+;;(setq ein:connect-default-notebook "8888/main")
+;;(add-hook 'python-mode-hook 'ein:connect-to-default-notebook)
+
+;; if you want auto-complete inside ein python
+;; (add-hook 'ein:connect-mode-hook
+;;   (lambda ()
+;;     (define-key ein:connect-mode-map [(tab)] 'ein:completer-complete)))
+
+;; if you want jedi inside ein python
+;;(add-hook 'ein:connect-mode-hook 'ein:jedi-setup)
+
 ;; clojure env tweaks
 (require 'clojure-mode)
 (defun turn-on-paredit () (paredit-mode 1))
@@ -177,6 +206,10 @@
  '(comint-scroll-show-maximum-output t)
  '(comint-scroll-to-bottom-on-input t)
  '(inhibit-startup-screen t)
+ '(jedi:complete-on-dot t)
+ '(jedi:get-in-function-call-delay 0)
+ '(jedi:key-complete (kbd "TAB"))
+ '(jedi:key-goto-definition (kbd "M-."))
  '(menu-bar-mode t)
  '(nrepl-server-command "lein2 repl :headless")
  '(protect-buffer-bury-p nil)
@@ -207,22 +240,22 @@
 		   (setq-default highlight-tabs t))))
 
 ;; If you want auto-complete
-;; (require 'auto-complete)
-;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-;; (require 'auto-complete-config)
-;; (ac-config-default)
+(require 'auto-complete)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+(require 'auto-complete-config)
+(ac-config-default)
 
-;; (dolist (mode '(python-mode
-;;                 shell-script-mode
-;;                 c-mode
-;;                 c++-mode
-;;                 emacs-lisp-mode
-;;                 clojure-mode
-;;                 latex-mode
-;;                 scala-mode
-;;                 lisp-mode
-;;                 java-mode))
-;;   (add-to-list 'ac-modes mode))
+(dolist (mode '(python-mode
+                shell-script-mode
+                c-mode
+                c++-mode
+                emacs-lisp-mode
+                clojure-mode
+                latex-mode
+                scala-mode
+                lisp-mode
+                java-mode))
+  (add-to-list 'ac-modes mode))
 
 ;; scala stuff
 ;; load the ensime lisp code...
