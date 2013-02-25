@@ -137,6 +137,7 @@
 (when (file-accessible-directory-p "/export/disk0/wb/python")
   (setq python-shell-virtualenv-path "/export/disk0/wb/python/")
 
+
   ;; For org-mode python, support my virtualenv.
   (activate-virtualenv "/export/disk0/wb/python/"))
 
@@ -232,7 +233,9 @@
                 scala-mode-hook
                 lisp-mode-hook
 		java-mode-hook
-		text-mode-hook))
+		text-mode-hook
+                matlab-mode
+                matlab-shell-mode))
   (add-hook hook (lambda()
                    (turn-on-auto-fill)
 		   (setq-default indent-tabs-mode nil)
@@ -259,8 +262,8 @@
 
 ;; scala stuff
 ;; load the ensime lisp code...
-(when (file-accessible-directory-p "/home/eugene/scala/ensime")
-  (add-to-list 'load-path "/home/eugene/scala/ensime/elisp/")
+(when (file-accessible-directory-p "~/scala/ensime")
+  (add-to-list 'load-path "~/scala/ensime/elisp/")
   (require 'ensime)
   ;; This step causes the ensime-mode to be started whenever
   ;; scala-mode is started for a buffer. You may have to customize this step
@@ -419,3 +422,16 @@ Dmitriy Igrishin's patched version of comint.el."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(when (file-accessible-directory-p "~/.emacs.d/matlab-emacs")
+  (add-to-list 'load-path "~/.emacs.d/matlab-emacs")
+  (load-library "matlab-load")
+
+  (add-hook 'matlab-mode-hook
+            (lambda () (define-key matlab-mode-map (kbd "TAB") 'matlab-complete-symbol)))
+
+  (add-hook 'matlab-shell-mode-hook
+            (lambda () (define-key matlab-shell-mode-map (kbd "TAB") 'matlab-complete-symbol)))
+  ;; Enable CEDET feature support for MATLAB code. (Optional)
+  ;;(matlab-cedet-setup)
+  )
