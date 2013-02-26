@@ -29,8 +29,8 @@
                                     find-file-in-project
                                     idle-highlight-mode ido-ubiquitous
                                     magit org paredit python ein
-                                    project-mode scala-mode slime
-                                    slime-repl
+                                    project-mode scala-mode
+                                    nrepl ac-nrepl
                                     starter-kit starter-kit-bindings
                                     starter-kit-eshell starter-kit-lisp
                                     virtualenv markdown-mode))
@@ -173,22 +173,21 @@
 (add-hook 'clojure-mode-hook 'paredit-mode)
 (add-hook 'lisp-mode-hook 'paredit-mode)
 (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-(add-hook 'slime-repl-mode-hook 'clojure-mode-font-lock-setup)
-(add-hook 'slime-repl-mode-hook 'paredit-mode)
-(define-key clojure-mode-map (kbd "C-c v") 'slime-eval-buffer)
-(global-set-key (kbd "C-c C-j") 'clojure-jack-in)
+(add-hook 'nrepl-mode-hook 'clojure-mode-font-lock-setup)
+(add-hook 'nrepl-mode-hook 'paredit-mode)
+(define-key clojure-mode-map (kbd "C-c v") 'nrepl-eval-buffer)
+(global-set-key (kbd "C-c C-j") 'nrepl-jack-in)
 
 ;; clojure+slime
 ;; control+i can perform indentation.  tab for completion.
-(require 'slime)
-(slime-setup)
+;;(require 'slime)
+;;(slime-setup)
 (add-hook 'clojure-mode-hook
   (lambda ()
     (define-key clojure-mode-map "\r" 'newline-and-indent)
     (define-key clojure-mode-map [(control ?/)] 'backward-up-list)
     (define-key clojure-mode-map [(control ?=)] 'down-list)
-    (define-key clojure-mode-map [(tab)] 'slime-indent-and-complete-symbol)
-    (define-key clojure-mode-map [f13] 'slime-cheat-sheet)))
+    (define-key clojure-mode-map [(tab)] 'nrepl-indent-and-complete-symbol)))
 
 
 (custom-set-variables
@@ -253,9 +252,9 @@
                 c-mode
                 c++-mode
                 emacs-lisp-mode
-                clojure-mode
                 latex-mode
                 scala-mode
+                clojure-mode
                 lisp-mode
                 java-mode))
   (add-to-list 'ac-modes mode))
