@@ -9,8 +9,6 @@
              '("melpa" . "http://melpa.milkbox.net/packages/") t) ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-
 ;; defined before (package-initialize) is called so it's available for
 ;; use within username.el scripts.
 (defun ensure-packages (ps)
@@ -30,7 +28,7 @@
                                     idle-highlight-mode ido-ubiquitous
                                     magit org paredit python ein
                                     project-mode scala-mode
-                                    nrepl ac-nrepl
+                                    nrepl ac-nrepl emacs-eclim
                                     starter-kit starter-kit-bindings
                                     starter-kit-eshell starter-kit-lisp
                                     virtualenv markdown-mode))
@@ -208,7 +206,7 @@
  '(inhibit-startup-screen t)
  '(jedi:complete-on-dot t)
  '(jedi:get-in-function-call-delay 0)
- '(jedi:key-complete (kbd "TAB"))
+ '(jedi:key-complete (kbd "<tab>"))
  '(jedi:key-goto-definition (kbd "M-."))
  '(menu-bar-mode t)
  '(nrepl-server-command "lein2 repl :headless")
@@ -237,15 +235,20 @@
                 matlab-shell-mode))
   (add-hook hook (lambda()
                    (turn-on-auto-fill)
-		   (setq-default indent-tabs-mode nil)
-		   (setq-default show-trailing-whitespace t)
-		   (setq-default highlight-tabs t))))
+		   (setq-default indent-tabs-mode nil
+                                 show-trailing-whitespace t
+                                 c-basic-offset 4
+                                 tab-width 4
+                                 highlight-tabs t))))
 
 ;; If you want auto-complete
 (require 'auto-complete)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 (require 'auto-complete-config)
 (ac-config-default)
+;; Make it so return doesn't complete (makes it hard to add newlines)
+(define-key ac-complete-mode-map (kbd "RET") nil)
+(define-key ac-complete-mode-map (kbd "<C-return>") 'ac-complete)
 
 (dolist (mode '(python-mode
                 shell-script-mode
@@ -269,7 +272,27 @@
   ;; if you're not using the standard scala mode.
   (add-hook 'scala-mode-hook 'ensime-scala-mode-hook))
 
-;; java
+;; java -- eclipse integration via eclim
+(require 'eclim)
+(global-eclim-mode)
+(require 'eclimd)
+(require 'ac-emacs-eclim-source)
+(custom-set-variables
+ '(eclim-eclipse-dirs '("~/Documents/workspace")))
+(setq help-at-pt-display-when-idle t)
+(setq help-at-pt-timer-delay 0.05)
+(help-at-pt-set-timer)
+(ac-emacs-eclim-config)
+
+(add-hook 'eclim-mode-hook
+          (lambda ()
+            (start-eclimd (first eclim-eclipse-dirs))
+            (eclim-problems-show-errors)
+            (define-key eclim-mode-map (kbd "M-.") 'eclim-java-find-declaration)
+            (define-key eclim-mode-map (kbd "C-?") 'eclim-java-show-documentation-for-current-element)
+	    (define-key eclim-mode-map (kbd "<tab>") 'ac-start)
+            (define-key eclim-mode-map (kbd "C-c `") 'eclim-problems)))
+
 ;; (add-to-list 'load-path "/home/eugene/java/malabar/lisp/")
 ;; ;; Or enable more if you wish
 ;; (setq semantic-default-submodes '(global-semantic-idle-scheduler-mode
@@ -427,10 +450,10 @@ Dmitriy Igrishin's patched version of comint.el."
   (load-library "matlab-load")
 
   (add-hook 'matlab-mode-hook
-            (lambda () (define-key matlab-mode-map (kbd "TAB") 'matlab-complete-symbol)))
+            (lambda () (define-key matlab-mode-map (kbd "<tab>") 'matlab-complete-symbol)))
 
   (add-hook 'matlab-shell-mode-hook
-            (lambda () (define-key matlab-shell-mode-map (kbd "TAB") 'matlab-complete-symbol)))
+            (lambda () (define-key matlab-shell-mode-map (kbd "<tab>") 'matlab-complete-symbol)))
   ;; Enable CEDET feature support for MATLAB code. (Optional)
   ;;(matlab-cedet-setup)
   )
