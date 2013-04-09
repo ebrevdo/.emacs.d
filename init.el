@@ -220,22 +220,22 @@
 
 ;; spaces instead of tabs + show trailing whitespace + turn on autofill
 (dolist (hook '(python-mode-hook
-		shell-script-mode-hook
-		c-mode-hook
+                shell-script-mode-hook
+                c-mode-hook
                 clj-mode-hook
-		c++-mode-hook
+                c++-mode-hook
                 emacs-lisp-mode-hook
                 clojure-mode-hook
                 latex-mode
                 scala-mode-hook
                 lisp-mode-hook
-		java-mode-hook
-		text-mode-hook
+                java-mode-hook
+                text-mode-hook
                 matlab-mode
                 matlab-shell-mode))
   (add-hook hook (lambda()
                    (turn-on-auto-fill)
-		   (setq-default indent-tabs-mode nil
+                   (setq-default indent-tabs-mode nil
                                  show-trailing-whitespace t
                                  c-basic-offset 4
                                  tab-width 4
@@ -247,6 +247,7 @@
 (require 'auto-complete-config)
 (ac-config-default)
 ;; Make it so return doesn't complete (makes it hard to add newlines)
+(define-key ac-complete-mode-map (kbd "<return>") nil)
 (define-key ac-complete-mode-map (kbd "RET") nil)
 (define-key ac-complete-mode-map (kbd "<C-return>") 'ac-complete)
 
@@ -274,14 +275,16 @@
 
 ;; java -- eclipse integration via eclim
 (require 'eclim)
-(global-eclim-mode)
 (require 'eclimd)
 (require 'ac-emacs-eclim-source)
+(global-eclim-mode)
 (custom-set-variables
- '(eclim-eclipse-dirs '("~/Documents/workspace")))
-(setq help-at-pt-display-when-idle t)
-(setq help-at-pt-timer-delay 0.05)
-(help-at-pt-set-timer)
+ '(eclim-eclipse-dirs '("~/Documents/workspace"))
+ '(eclimd-default-workspace "~/Documents/workspace"))
+
+;;(setq help-at-pt-display-when-idle t)
+;;(setq help-at-pt-timer-delay 0.05)
+;;(help-at-pt-set-timer)
 (ac-emacs-eclim-config)
 
 (add-hook 'eclim-mode-hook
@@ -290,7 +293,7 @@
             (eclim-problems-show-errors)
             (define-key eclim-mode-map (kbd "M-.") 'eclim-java-find-declaration)
             (define-key eclim-mode-map (kbd "C-?") 'eclim-java-show-documentation-for-current-element)
-	    (define-key eclim-mode-map (kbd "<tab>") 'ac-start)
+            (define-key eclim-mode-map (kbd "<tab>") 'ac-start)
             (define-key eclim-mode-map (kbd "C-c `") 'eclim-problems)))
 
 ;; (add-to-list 'load-path "/home/eugene/java/malabar/lisp/")
