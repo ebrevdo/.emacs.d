@@ -237,7 +237,12 @@
                    (turn-on-auto-fill)
                    (setq-default indent-tabs-mode nil
                                  show-trailing-whitespace t
+                                 ;; 4-space tabs.  new line after paren
+                                 ;; indentation tabs instead of indenting up to parens
                                  c-basic-offset 4
+                                 c-offsets-alist '((arglist-cont-nonempty . +)
+                                                   (arglist-intro . +)
+                                                   (arglist-cont . nil))
                                  tab-width 4
                                  highlight-tabs t))))
 
