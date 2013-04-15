@@ -24,7 +24,7 @@
 (defvar my-packages '(auto-complete clojure-mode clojure-project-mode
                                     clojure-test-mode color-theme eieio
                                     ess ess-smart-underscore
-                                    find-file-in-project
+                                    find-file-in-project jedi
                                     idle-highlight-mode ido-ubiquitous
                                     magit org paredit python ein
                                     project-mode scala-mode
@@ -240,9 +240,9 @@
                                  ;; 4-space tabs.  new line after paren
                                  ;; indentation tabs instead of indenting up to parens
                                  c-basic-offset 4
-                                 c-offsets-alist '((arglist-cont-nonempty . +)
-                                                   (arglist-intro . +)
-                                                   (arglist-cont . nil))
+                                 c-offsets-alist '((arglist-intro . +)
+                                                   (arglist-cont . nil)
+                                                   (arglist-cont-nonempty . +))
                                  tab-width 4
                                  highlight-tabs t))))
 
