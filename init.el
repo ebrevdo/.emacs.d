@@ -23,7 +23,7 @@
 
 (defvar my-packages '(auto-complete clojure-mode clojure-project-mode
                                     clojure-test-mode color-theme eieio
-                                    ess ess-smart-underscore
+                                    ess ess-smart-underscore company
                                     find-file-in-project jedi
                                     idle-highlight-mode ido-ubiquitous
                                     magit org paredit python ein
@@ -162,12 +162,12 @@
   (add-to-PATH (concat dir "/bin"))
   (add-to-list 'exec-path (concat dir "/bin")))
 
-(when (file-accessible-directory-p "/export/disk0/wb/python")
-  (setq python-shell-virtualenv-path "/export/disk0/wb/python/")
+(let ((ppath (expand-file-name "~/python/")))
+  (when (file-accessible-directory-p ppath)
+    (setq python-shell-virtualenv-path ppath)
 
-
-  ;; For org-mode python, support my virtualenv.
-  (activate-virtualenv "/export/disk0/wb/python/"))
+    ;; For org-mode python, support my virtualenv.
+    (activate-virtualenv ppath)))
 
 ;; jedi
 (setq jedi:setup-keys t)
@@ -277,26 +277,29 @@
                                  highlight-tabs t))))
 
 ;; If you want auto-complete
-(require 'auto-complete)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-(require 'auto-complete-config)
-(ac-config-default)
-;; Make it so return doesn't complete (makes it hard to add newlines)
-(define-key ac-complete-mode-map (kbd "<return>") nil)
-(define-key ac-complete-mode-map (kbd "RET") nil)
-(define-key ac-complete-mode-map (kbd "<C-return>") 'ac-complete)
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
 
-(dolist (mode '(python-mode
-                shell-script-mode
-                c-mode
-                c++-mode
-                emacs-lisp-mode
-                latex-mode
-                scala-mode
-                clojure-mode
-                lisp-mode
-                java-mode))
-  (add-to-list 'ac-modes mode))
+;; (require 'auto-complete)
+;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+;; (require 'auto-complete-config)
+;; (ac-config-default)
+;; ;; Make it so return doesn't complete (makes it hard to add newlines)
+;; (define-key ac-complete-mode-map (kbd "<return>") nil)
+;; (define-key ac-complete-mode-map (kbd "RET") nil)
+;; (define-key ac-complete-mode-map (kbd "<C-return>") 'ac-complete)
+
+;; (dolist (mode '(python-mode
+;;                 shell-script-mode
+;;                 c-mode
+;;                 c++-mode
+;;                 emacs-lisp-mode
+;;                 latex-mode
+;;                 scala-mode
+;;                 clojure-mode
+;;                 lisp-mode
+;;                 java-mode))
+;;   (add-to-list 'ac-modes mode))
 
 ;; scala stuff
 ;; load the ensime lisp code...
@@ -311,7 +314,8 @@
 ;; java -- eclipse integration via eclim
 (require 'eclim)
 (require 'eclimd)
-(require 'ac-emacs-eclim-source)
+
+;;(require 'ac-emacs-eclim-source)
 (global-eclim-mode)
 (custom-set-variables
  '(eclim-eclipse-dirs '("~/Documents/workspace"))
@@ -320,7 +324,11 @@
 ;;(setq help-at-pt-display-when-idle t)
 ;;(setq help-at-pt-timer-delay 0.05)
 ;;(help-at-pt-set-timer)
-(ac-emacs-eclim-config)
+;;(ac-emacs-eclim-config)
+
+(require 'company-emacs-eclim)
+(company-emacs-eclim-setup)
+(global-company-mode t)
 
 (add-hook 'eclim-mode-hook
           (lambda ()
@@ -328,7 +336,7 @@
             (eclim-problems-show-errors)
             (define-key eclim-mode-map (kbd "M-.") 'eclim-java-find-declaration)
             (define-key eclim-mode-map (kbd "C-?") 'eclim-java-show-documentation-for-current-element)
-            (define-key eclim-mode-map (kbd "<tab>") 'ac-start)
+            (define-key eclim-mode-map (kbd "<tab>") 'company-complete)
             (define-key eclim-mode-map (kbd "C-c `") 'eclim-problems)))
 
 ;; (add-to-list 'load-path "/home/eugene/java/malabar/lisp/")
@@ -435,7 +443,7 @@ comint-replace-by-expanded-history-before-point."
   (let ((old-message (symbol-function 'message)))
     (unwind-protect
       (progn (fset 'message 'ignore) ad-do-it)
-    (fset 'message old-message))))
+      (fset 'message old-message))))
 
 ;; (defadvice comint-send-input (around go-to-end-of-multiline activate)
 ;;   "When I press enter, jump to the end of the *buffer*, instead of the end of
