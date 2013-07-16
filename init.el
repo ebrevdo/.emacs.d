@@ -96,6 +96,36 @@
   ;; Set 16pt font
   (set-face-attribute 'default nil :height 160))
 
+(when (file-accessible-directory-p "~/emacs/cedet-dev")
+  (load-file "~/emacs/cedet-dev/cedet-devel-load.el")
+
+  ;; * This enables the database and idle reparse engines
+  (semantic-load-enable-minimum-features)
+
+  ;; * This enables some tools useful for coding, such as summary mode,
+  ;;   imenu support, and the semantic navigator
+  (semantic-load-enable-code-helpers)
+
+  ;; * This enables even more coding tools such as intellisense mode,
+  ;;   decoration mode, and stickyfunc mode (plus regular code helpers)
+  ;;  (semantic-load-enable-gaudy-code-helpers)
+  (add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode t)
+  (add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode t)
+  (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode t)
+
+  (semantic-mode 1)
+
+  ;; Enable EDE (Project Management) features
+  (global-ede-mode 1)
+
+  (setq ede-arduino-appdir "/opt/arduino-1.0.5"))
+
+;; Arduino mode
+(when (file-accessible-directory-p "~/emacs/arduino-mode")
+  (add-to-list 'load-path "~/emacs/arduino-mode")
+  (setq auto-mode-alist (cons '("\\.\\(pde\\|ino\\)$" . arduino-mode) auto-mode-alist))
+  (autoload 'arduino-mode "arduino-mode" "Arduino editing mode." t))
+
 ;; GNU R
 (require 'ess-site)
 
