@@ -1,13 +1,11 @@
 (require 'package)
 
-;; include marmalade repos in your package archive list
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
+;; Comment
+(defmacro comment (v))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-to-list 'package-archives                                    ;;
-             '("melpa" . "http://melpa.milkbox.net/packages/") t) ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; include marmalade repos in your package archive list
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 
 ;; defined before (package-initialize) is called so it's available for
 ;; use within username.el scripts.
@@ -21,17 +19,19 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(defvar my-packages '(auto-complete clojure-mode clojure-project-mode
-                                    clojure-test-mode color-theme eieio
-                                    ess ess-smart-underscore company
-                                    find-file-in-project jedi
-                                    idle-highlight-mode ido-ubiquitous
-                                    magit org paredit python ein
-                                    project-mode scala-mode
-                                    nrepl ac-nrepl emacs-eclim
-                                    starter-kit starter-kit-bindings
-                                    starter-kit-eshell starter-kit-lisp
-                                    virtualenv markdown-mode))
+(defvar my-packages '(auto-complete
+                      clojure-mode clojure-project-mode
+                      clojure-test-mode color-theme eieio
+                      ess ess-smart-underscore company
+                      find-file-in-project jedi
+                      idle-highlight-mode ido-ubiquitous
+                      magit org paredit python ein
+                      project-mode scala-mode
+                      nrepl ac-nrepl emacs-eclim
+                      starter-kit starter-kit-bindings
+                      starter-kit-eshell starter-kit-lisp
+                      virtualenv markdown-mode
+                      auto-complete-clang))
 
 (ensure-packages my-packages)
 
@@ -87,7 +87,7 @@
 (setq initial-major-mode 'text-mode)
 (setq-default fill-column 80)
 
-; line, column number mode
+                                        ; line, column number mode
 (setq line-number-mode t)
 (setq column-number-mode t)
 (global-linum-mode t)
@@ -96,29 +96,41 @@
   ;; Set 16pt font
   (set-face-attribute 'default nil :height 160))
 
-(when (file-accessible-directory-p "~/emacs/cedet-dev")
-  (load-file "~/emacs/cedet-dev/cedet-devel-load.el")
+(comment
+ (when (file-accessible-directory-p "~/emacs/cedet-dev")
+   (load-file "~/emacs/cedet-dev/cedet-devel-load.el")
 
-  ;; * This enables the database and idle reparse engines
-  (semantic-load-enable-minimum-features)
+   ;; * This enables the database and idle reparse engines
+   (semantic-load-enable-minimum-features)
 
-  ;; * This enables some tools useful for coding, such as summary mode,
-  ;;   imenu support, and the semantic navigator
-  (semantic-load-enable-code-helpers)
+   ;; * This enables some tools useful for coding, such as summary mode,
+   ;;   imenu support, and the semantic navigator
+   (semantic-load-enable-code-helpers)
 
-  ;; * This enables even more coding tools such as intellisense mode,
-  ;;   decoration mode, and stickyfunc mode (plus regular code helpers)
-  ;;  (semantic-load-enable-gaudy-code-helpers)
-  (add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode t)
-  (add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode t)
-  (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode t)
+   ;; Use gnu/global sometimes
+   (semanticdb-enable-gnu-global-databases 'c-mode)
+   (semanticdb-enable-gnu-global-databases 'c++-mode)
 
-  (semantic-mode 1)
+   ;; Use cscope (to build an index: cscope -Rq)
+   (semanticdb-enable-cscope-databases)
 
-  ;; Enable EDE (Project Management) features
-  (global-ede-mode 1)
+   ;; * This enables even more coding tools such as intellisense mode,
+   ;;   decoration mode, and stickyfunc mode (plus regular code helpers)
+   ;;  (semantic-load-enable-gaudy-code-helpers)
+   (add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode t)
+   (add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode t)
+   (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode t)
 
-  (setq ede-arduino-appdir "/opt/arduino-1.0.5"))
+   ;;(semantic-mode 1)
+
+   ;; Enable EDE (Project Management) features
+   (global-ede-mode 1)
+
+   (setq ede-arduino-appdir "/opt/arduino-1.0.5")
+
+   ;; Projects
+   (ede-cpp-root-project "graphlab" :file "/opt/graphlab/configure"
+                         :include-path (recursive-list-directories "/opt/graphlab"))))
 
 ;; Arduino mode
 (when (file-accessible-directory-p "~/emacs/arduino-mode")
@@ -140,11 +152,11 @@
 (require 'python)
 
 (add-hook 'python-mode-hook
-  (lambda ()
-    (define-key python-mode-map [(tab)] 'completion-at-point)))
+          (lambda ()
+            (define-key python-mode-map [(tab)] 'completion-at-point)))
 (add-hook 'inferior-python-mode-hook
-  (lambda ()
-    (define-key inferior-python-mode-map [(tab)] 'completion-at-point)))
+          (lambda ()
+            (define-key inferior-python-mode-map [(tab)] 'completion-at-point)))
 
 (setq python-shell-interpreter "ipython --pylab --colors=NoColor"
       python-shell-interpreter-args ""
@@ -175,12 +187,12 @@
 
 ;; ein and jedi
 (add-hook 'ein:notebook-multilang-mode-hook
-  (lambda ()
-    (define-key ein:notebook-multilang-mode-map [(tab)] 'ein:completer-complete)))
+          (lambda ()
+            (define-key ein:notebook-multilang-mode-map [(tab)] 'ein:completer-complete)))
 
 (add-hook 'ein:notebook-python-mode-hook
-  (lambda ()
-    (define-key ein:notebook-python-mode-map [(tab)] 'ein:completer-complete)))
+          (lambda ()
+            (define-key ein:notebook-python-mode-map [(tab)] 'ein:completer-complete)))
 
 ;; python-mode automatically accesses ein
 ;;(add-hook 'after-init-hook 'ein:notebooklist-load)
@@ -211,11 +223,54 @@
 ;;(require 'slime)
 ;;(slime-setup)
 (add-hook 'clojure-mode-hook
-  (lambda ()
-    (define-key clojure-mode-map "\r" 'newline-and-indent)
-    (define-key clojure-mode-map [(control ?/)] 'backward-up-list)
-    (define-key clojure-mode-map [(control ?=)] 'down-list)
-    (define-key clojure-mode-map [(tab)] 'nrepl-indent-and-complete-symbol)))
+          (lambda ()
+            (define-key clojure-mode-map "\r" 'newline-and-indent)
+            (define-key clojure-mode-map [(control ?/)] 'backward-up-list)
+            (define-key clojure-mode-map [(control ?=)] 'down-list)
+            (define-key clojure-mode-map [(tab)] 'nrepl-indent-and-complete-symbol)))
+
+;; slime for ECL / CL development
+(when (file-accessible-directory-p "~/emacs/slime")
+  (add-to-list 'load-path "~/emacs/slime/")
+  (add-to-list 'auto-mode-alist '("\\.asd$" . lisp-mode))
+
+  (eval-after-load "slime"
+    '(progn
+       (setq slime-lisp-implementations
+             '((ecl ("/usr/local/bin/ecl"))
+               ;;(sbcl ("/usr/bin/sbcl"))
+               ;;(clisp ("/usr/bin/clisp"))
+               ))
+       (slime-setup '(slime-asdf
+                      slime-autodoc
+                      slime-editing-commands
+                      slime-fancy-inspector
+                      slime-fontifying-fu
+                      slime-fuzzy
+                      slime-indentation
+                      slime-package-fu
+                      slime-references
+                      slime-repl
+                      slime-sbcl-exts
+                      slime-scratch
+                      slime-xref-browser))
+       (slime-autodoc-mode)
+       (setq slime-complete-symbol*-fancy t)
+       (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol)
+       (dolist (hook '(slime-mode-hook slime-repl-mode-hook))
+         (add-hook hook (lambda ()
+                          (paredit-mode +1)
+                          (set-variable lisp-indent-function 'common-lisp-indent-function)
+                          (slime-define-keys slime-mode-map
+                            ("\r" 'newline-and-indent)
+                            ([(control ?/)] 'backward-up-list)
+                            ([(control ?=)] 'down-list)
+                            ([tab] 'slime-indent-and-complete-symbol)
+                            ([(control c) tab] 'slime-complete-form)
+                            ([f13] 'slime-cheat-sheet)))))))
+
+  (require 'slime))
+
 
 
 (custom-set-variables
@@ -233,6 +288,10 @@
  '(comint-prompt-read-only nil)
  '(comint-scroll-show-maximum-output t)
  '(comint-scroll-to-bottom-on-input t)
+ '(company-backends (quote (company-emacs-eclim company-elisp company-css company-semantic company-abbrev company-clang company-xcode company-ropemacs (company-gtags company-etags company-dabbrev-code company-keywords) company-oddmuse company-files company-dabbrev)))
+ '(eclim-eclipse-dirs (quote ("~/Documents/workspace")))
+ '(eclimd-default-workspace "~/Documents/workspace")
+ '(ede-project-directories (quote ("/opt/graphlab" "/opt/graphlab/debug")))
  '(inhibit-startup-screen t)
  '(jedi:complete-on-dot t)
  '(jedi:get-in-function-call-delay 0)
@@ -241,6 +300,7 @@
  '(menu-bar-mode t)
  '(nrepl-server-command "lein2 repl :headless")
  '(protect-buffer-bury-p nil)
+ '(safe-local-variable-values (quote ((Package . C) (Syntax . Common-Lisp) (whitespace-line-column . 80) (lexical-binding . t))))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
  '(swank-clojure-extra-vm-args (quote ("-server" "-Xmx2048M")))
@@ -317,9 +377,7 @@
 
 ;;(require 'ac-emacs-eclim-source)
 (global-eclim-mode)
-(custom-set-variables
- '(eclim-eclipse-dirs '("~/Documents/workspace"))
- '(eclimd-default-workspace "~/Documents/workspace"))
+
 
 ;;(setq help-at-pt-display-when-idle t)
 ;;(setq help-at-pt-timer-delay 0.05)
@@ -397,7 +455,7 @@
     (dirtrack-mode 1)))
 (add-hook 'shell-mode-hook 'my-dirtrack-mode)
 
-; interpret and use ansi color codes in shell output windows
+                                        ; interpret and use ansi color codes in shell output windows
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 (defun set-scroll-conservatively ()
@@ -414,8 +472,8 @@
 ;; (add-hook 'shell-mode-hook 'unset-display-buffer-reuse-frames)
 
 ;; make it harder to kill my shell buffers
-;(require 'protbuf)
-;(add-hook 'shell-mode-hook 'protect-process-buffer-from-kill-mode)
+                                        ;(require 'protbuf)
+                                        ;(add-hook 'shell-mode-hook 'protect-process-buffer-from-kill-mode)
 
 (defun make-comint-directory-tracking-work-remotely ()
   "Add this to comint-mode-hook to make directory tracking work
@@ -436,13 +494,13 @@ An alternate approach would be after-advice on isearch-other-meta-char."
 (add-hook 'isearch-mode-end-hook 'enter-again-if-enter)
 
 (defadvice comint-previous-matching-input
-    (around suppress-history-item-messages activate)
+  (around suppress-history-item-messages activate)
   "Suppress the annoying 'History item : NNN' messages from shell history isearch.
 If this isn't enough, try the same thing with
 comint-replace-by-expanded-history-before-point."
   (let ((old-message (symbol-function 'message)))
     (unwind-protect
-      (progn (fset 'message 'ignore) ad-do-it)
+        (progn (fset 'message 'ignore) ad-do-it)
       (fset 'message old-message))))
 
 ;; (defadvice comint-send-input (around go-to-end-of-multiline activate)
@@ -454,7 +512,7 @@ comint-replace-by-expanded-history-before-point."
 
 ;; not sure why, but comint needs to be reloaded from the source (*not*
 ;; compiled) elisp to make the above advise stick.
-;(load "comint.el.gz")
+                                        ;(load "comint.el.gz")
 
 ;; for other code, e.g. emacsclient in TRAMP ssh shells and automatically
 ;; closing completions buffers, see the links above.
@@ -480,10 +538,10 @@ Dmitriy Igrishin's patched version of comint.el."
       (comint-close-completions)))
 
 (defadvice comint-dynamic-list-completions (after close-completions activate)
-    (comint-close-completions)
-    (if (not unread-command-events)
-        ;; comint's "Type space to flush" swallows space. put it back in.
-        (setq unread-command-events (listify-key-sequence " "))))
+  (comint-close-completions)
+  (if (not unread-command-events)
+      ;; comint's "Type space to flush" swallows space. put it back in.
+      (setq unread-command-events (listify-key-sequence " "))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -503,3 +561,17 @@ Dmitriy Igrishin's patched version of comint.el."
   ;; Enable CEDET feature support for MATLAB code. (Optional)
   ;;(matlab-cedet-setup)
   )
+
+(defun recursive-list-directories (path)
+  (let* ((last (substring path -1 nil))
+         (path (if (string= last "/")
+                   path
+                 (concat path "/")))
+         (lpath (length path))
+         (cmd (concat "find " path " -type d"))
+         (parse (lambda (x)
+                  (if (< lpath (length x))
+                      (substring x lpath)
+                    x)))
+         (splitted (split-string (shell-command-to-string cmd) "\n")))
+    (mapcar parse splitted)))
